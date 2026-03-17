@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState } from "react";
 import axios from 'axios';
+import { API_URL } from "../config";
 
 interface AuthContextType {
   token: string | null;
@@ -34,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteAccount = async () => {
     if (!token) return;
     try {
-      await axios.delete("http://localhost:3001/api/auth/delete-account", {
+      await axios.delete(`${API_URL}/api/auth/delete-account`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       logout();

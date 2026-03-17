@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config";
 import { useAuth } from "../context/AuthContext";
 
 import { ArrowLeft } from "lucide-react";
@@ -17,7 +18,7 @@ const Login = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const response = await axios.post("http://localhost:3001/api/auth/google", {
+        const response = await axios.post(`${API_URL}/api/auth/google`, {
           credential: tokenResponse.access_token,
         });
         login(response.data.token, response.data.username);
@@ -33,7 +34,7 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3001/api/auth/login", { email, password });
+      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
       login(response.data.token, response.data.username);
       navigate("/");
     } catch (err: unknown) {

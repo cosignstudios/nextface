@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config";
 import { useAuth } from "../context/AuthContext";
 import { useGoogleLogin } from "@react-oauth/google";
 
@@ -18,7 +19,7 @@ const Register = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const response = await axios.post("http://localhost:3001/api/auth/google", {
+        const response = await axios.post(`${API_URL}/api/auth/google`, {
           credential: tokenResponse.access_token,
         });
         login(response.data.token, response.data.username);
@@ -34,7 +35,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3001/api/auth/register", { username, email, password });
+      await axios.post(`${API_URL}/api/auth/register`, { username, email, password });
       setSuccess("Account created! Please check your email to verify.");
       setError("");
     } catch (err: unknown) {
