@@ -1,0 +1,164 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Tenor+Sans&family=Forum&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400,1&display=swap');
+
+@theme {
+  --color-brutal-bg: var(--bg-color);
+  --color-brutal-yellow: var(--accent-yellow);
+  --color-brutal-pink: var(--accent-pink);
+  --color-brutal-green: var(--accent-green);
+  --color-brutal-blue: var(--accent-blue);
+  --color-brutal-accent: var(--accent-color);
+
+  --shadow-brutal-sm: var(--dynamic-shadow) var(--dynamic-shadow) 0px 0px rgba(0,0,0,1);
+  --shadow-brutal: var(--dynamic-shadow) var(--dynamic-shadow) 0px 0px rgba(0,0,0,1);
+  --shadow-brutal-lg: calc(var(--dynamic-shadow) + 2px) calc(var(--dynamic-shadow) + 2px) 0px 0px rgba(0,0,0,1);
+
+  --font-inter: "Inter", sans-serif;
+  --font-satoshi: "Satoshi", sans-serif;
+}
+
+@layer base {
+  :root, .theme-light {
+    --bg-color: #fdf8ed;
+    --text-color: #000000;
+    --accent-yellow: #ffde59;
+    --accent-pink: #ff9cfa;
+    --accent-green: #a7e4b5;
+    --accent-blue: #82b3ff;
+    --surface-white: #ffffff;
+    
+    /* Dynamic Overrides */
+    --dynamic-border: 2px;
+    --dynamic-shadow: 4px;
+    --accent-color: var(--accent-blue);
+  }
+
+  .theme-dark {
+    --bg-color: #1a1a1a;
+    --text-color: #f4f4f5;
+    --accent-yellow: #ffde59;
+    --accent-pink: #ff9cfa;
+    --accent-green: #a7e4b5;
+    --accent-blue: #82b3ff;
+    --surface-white: #2d2d2d;
+  }
+
+  .theme-gray {
+    --bg-color: #e5e5e5;
+    --text-color: #000000;
+    --accent-yellow: #ffffff;
+    --accent-pink: #d4d4d4;
+    --accent-green: #a3a3a3;
+    --accent-blue: #737373;
+    --surface-white: #ffffff;
+    filter: grayscale(100%);
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-inter);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important; }
+  .font-serif { font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important; }
+  .font-sans { font-family: var(--font-inter) !important; }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-satoshi);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+}
+
+@layer components {
+  .btn-brutal {
+    @apply font-black px-6 py-3 transition-all 
+    uppercase tracking-widest text-sm flex items-center justify-center gap-2;
+    border: var(--dynamic-border) solid black;
+    box-shadow: var(--dynamic-shadow) var(--dynamic-shadow) 0px 0px rgba(0,0,0,1);
+    cursor: pointer;
+    color: #000 !important;
+  }
+
+  .btn-brutal:hover {
+    @apply -translate-y-0.5;
+    box-shadow: calc(var(--dynamic-shadow) + 2px) calc(var(--dynamic-shadow) + 2px) 0px 0px rgba(0,0,0,1);
+  }
+
+  .btn-brutal:active {
+    transform: translate(var(--dynamic-shadow), var(--dynamic-shadow));
+    box-shadow: none !important;
+  }
+
+  .btn-brutal:disabled {
+    @apply bg-gray-300 shadow-none translate-x-0 translate-y-0 cursor-not-allowed opacity-50;
+  }
+
+  .card-brutal {
+    @apply bg-[var(--surface-white)] p-8;
+    border: var(--dynamic-border) solid black;
+    box-shadow: var(--dynamic-shadow) var(--dynamic-shadow) 0px 0px rgba(0,0,0,1);
+  }
+
+  .input-brutal {
+    @apply bg-[var(--surface-white)] px-4 py-3 
+    focus:outline-none focus:ring-0 focus:border-black
+    transition-all font-medium placeholder:text-gray-400 text-[var(--text-color)];
+    border: var(--dynamic-border) solid black;
+    box-shadow: calc(var(--dynamic-shadow) / 2) calc(var(--dynamic-shadow) / 2) 0px 0px rgba(0,0,0,1);
+  }
+
+  .input-brutal:focus {
+    box-shadow: var(--dynamic-shadow) var(--dynamic-shadow) 0px 0px rgba(0,0,0,1);
+  }
+
+  .texture-dots {
+    background-image: radial-gradient(var(--text-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.15;
+  }
+  
+  .texture-grid {
+    background-image: 
+      linear-gradient(var(--text-color) 0.5px, transparent 0.5px),
+      linear-gradient(90deg, var(--text-color) 0.5px, transparent 0.5px);
+    background-size: 20px 20px;
+    opacity: 0.1;
+  }
+
+  .font-fancy {
+    font-family: 'Tenor Sans', sans-serif;
+  }
+}
+
+button, 
+a,
+[role="button"] {
+  cursor: pointer !important;
+}
+
+/* Custom Scrollbar Styling (Brutalist style) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-brutal-bg);
+  border-left: 2px solid black;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: black;
+  border: 2px solid var(--color-brutal-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #333;
+}
+
+
+
