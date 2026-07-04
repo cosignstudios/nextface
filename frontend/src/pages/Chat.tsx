@@ -214,15 +214,10 @@ const Chat = () => {
                   </span>
                 </div>
                 {(!remoteMicOn || !remoteCameraOn) && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-none">
-                     <div className="flex flex-col items-center gap-4 bg-brutal-pink border-4 border-black px-6 lg:px-8 py-4 lg:py-6 shadow-brutal rotate-1">
-                        <div className="flex gap-4 text-black">
-                           {!remoteCameraOn && <VideoOff className="w-10 h-10 lg:w-12 lg:h-12" />}
-                           {!remoteMicOn && <MicOff className="w-10 h-10 lg:w-12 lg:h-12" />}
-                        </div>
-                        <span className="font-black uppercase tracking-widest text-black text-xs lg:text-sm text-center">
-                           Stranger has {(!remoteMicOn && !remoteCameraOn) ? "disabled media" : !remoteCameraOn ? "turned off video" : "muted their mic"}
-                        </span>
+                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                     <div className="flex gap-6 lg:gap-8 text-white drop-shadow-2xl">
+                        {!remoteCameraOn && <VideoOff className="w-16 h-16 lg:w-24 lg:h-24 opacity-80" />}
+                        {!remoteMicOn && <MicOff className="w-16 h-16 lg:w-24 lg:h-24 opacity-80" />}
                      </div>
                   </div>
                 )}
