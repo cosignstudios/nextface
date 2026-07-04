@@ -207,12 +207,7 @@ const Chat = () => {
             />
             {remoteStream && (
               <>
-                <div className="absolute top-16 left-4 lg:top-8 lg:left-8 z-10 flex items-center gap-3 bg-brutal-yellow border-2 border-black px-4 lg:px-5 py-2 shadow-brutal transform -rotate-1">
-                  <div className="w-2 h-2 bg-black animate-pulse"></div>
-                  <span className="text-xs font-black uppercase tracking-widest text-black">
-                     Protocol: <span className="underline">{remoteUsername || "Stranger"}</span> ACTIVE
-                  </span>
-                </div>
+
                 {(!remoteMicOn || !remoteCameraOn) && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                      <div className="flex gap-6 lg:gap-8 text-white drop-shadow-2xl">
