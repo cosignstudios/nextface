@@ -50,7 +50,9 @@ const Chat = () => {
     isScreenSharing,
     toggleScreenShare,
     onlineUsers,
-    clearMessages
+    clearMessages,
+    remoteMicOn,
+    remoteCameraOn
   } = useWebRTC();
 
   const [chatMessage, setChatMessage] = useState("");
@@ -204,12 +206,27 @@ const Chat = () => {
               onLoadedMetadata={(e) => e.currentTarget.play().catch(() => {})}
             />
             {remoteStream && (
-              <div className="absolute top-8 left-8 z-10 flex items-center gap-3 bg-brutal-yellow border-2 border-black px-5 py-2 shadow-brutal transform -rotate-1">
-                <div className="w-2 h-2 bg-black animate-pulse"></div>
-                <span className="text-xs font-black uppercase tracking-widest text-black">
-                   Protocol: <span className="underline">{remoteUsername || "Stranger"}</span> ACTIVE
-                </span>
-              </div>
+              <>
+                <div className="absolute top-16 left-4 lg:top-8 lg:left-8 z-10 flex items-center gap-3 bg-brutal-yellow border-2 border-black px-4 lg:px-5 py-2 shadow-brutal transform -rotate-1">
+                  <div className="w-2 h-2 bg-black animate-pulse"></div>
+                  <span className="text-xs font-black uppercase tracking-widest text-black">
+                     Protocol: <span className="underline">{remoteUsername || "Stranger"}</span> ACTIVE
+                  </span>
+                </div>
+                {(!remoteMicOn || !remoteCameraOn) && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-none">
+                     <div className="flex flex-col items-center gap-4 bg-brutal-pink border-4 border-black px-6 lg:px-8 py-4 lg:py-6 shadow-brutal rotate-1">
+                        <div className="flex gap-4 text-black">
+                           {!remoteCameraOn && <VideoOff className="w-10 h-10 lg:w-12 lg:h-12" />}
+                           {!remoteMicOn && <MicOff className="w-10 h-10 lg:w-12 lg:h-12" />}
+                        </div>
+                        <span className="font-black uppercase tracking-widest text-black text-xs lg:text-sm text-center">
+                           Stranger has {(!remoteMicOn && !remoteCameraOn) ? "disabled media" : !remoteCameraOn ? "turned off video" : "muted their mic"}
+                        </span>
+                     </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 

@@ -35,6 +35,9 @@ export const useWebRTC = () => {
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
+  const [remoteMicOn, setRemoteMicOn] = useState(true);
+  const [remoteCameraOn, setRemoteCameraOn] = useState(true);
+
   const [remoteUsername, setRemoteUsername] = useState<string>("");
   const [onlineUsers] = useState<number>(0);
   const remoteUsernameRef = useRef<string>("");
@@ -93,6 +96,12 @@ export const useWebRTC = () => {
       localStream.getVideoTracks().forEach(t => (t.enabled = isCameraOn));
     }
   }, [isCameraOn, localStream]);
+
+  useEffect(() => {
+    if (dataChannelRef.current && dataChannelRef.current.readyState === 'open') {
+      dataChannelRef.current.send(JSON.stringify({ type: 'media-state', mic: isMicOn, camera: isCameraOn }));
+    }
+  }, [isMicOn, isCameraOn]);
 
   const stopScreenShare = useCallback(async () => {
     if (!isScreenSharing || !screenStreamRef.current) return;
@@ -164,6 +173,8 @@ export const useWebRTC = () => {
     remoteUsernameRef.current = "";
     currentRoomIdRef.current = null;
     isMatchingRef.current = false;
+    setRemoteMicOn(true);
+    setRemoteCameraOn(true);
   }, []);
 
   const setupDataChannel = useCallback((channel: RTCDataChannel) => {
@@ -174,8 +185,9 @@ export const useWebRTC = () => {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
-      // Send our username to the peer
+      // Send our username and media state to the peer
       channel.send(JSON.stringify({ type: 'username', username: localUsername }));
+      channel.send(JSON.stringify({ type: 'media-state', mic: isMicOn, camera: isCameraOn }));
     };
 
     channel.onmessage = (event) => {
@@ -185,6 +197,9 @@ export const useWebRTC = () => {
       } else if (data.type === 'username') {
         setRemoteUsername(data.username);
         remoteUsernameRef.current = data.username;
+      } else if (data.type === 'media-state') {
+        setRemoteMicOn(data.mic);
+        setRemoteCameraOn(data.camera);
       } else if (data.type === 'disconnect') {
         handlePeerDisconnect();
       }
@@ -448,7 +463,9 @@ export const useWebRTC = () => {
     remoteUsername,
     initializeMedia,
     onlineUsers,
-    clearMessages
+    clearMessages,
+    remoteMicOn,
+    remoteCameraOn
   };
 };
 
