@@ -24,7 +24,8 @@ import {
   ArrowLeft,
   Eraser,
   Maximize,
-  Minimize
+  Minimize,
+  SwitchCamera
 } from "lucide-react";
 
 const aspectRatios = [
@@ -61,7 +62,8 @@ const Chat = () => {
     onlineUsers,
     clearMessages,
     remoteMicOn,
-    remoteCameraOn
+    remoteCameraOn,
+    flipCamera
   } = useWebRTC();
 
   const [chatMessage, setChatMessage] = useState("");
@@ -313,6 +315,13 @@ const Chat = () => {
                 title={isCameraOn ? "Disable Camera" : "Enable Camera"}
               >
                 {isCameraOn ? <VideoIcon className="w-5 h-5 md:w-7 md:h-7" /> : <VideoOff className="w-5 h-5 md:w-7 md:h-7" />}
+              </button>
+              <button
+                onClick={flipCamera}
+                className="w-10 h-10 md:w-14 md:h-14 btn-brutal !p-0 shrink-0 bg-white lg:hidden"
+                title="Flip Camera"
+              >
+                <SwitchCamera className="w-5 h-5 md:w-7 md:h-7" />
               </button>
               <button
                 onClick={toggleScreenShare}

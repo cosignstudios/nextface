@@ -34,6 +34,7 @@ export const useWebRTC = () => {
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
 
   const [remoteMicOn, setRemoteMicOn] = useState(true);
   const [remoteCameraOn, setRemoteCameraOn] = useState(true);
@@ -54,7 +55,7 @@ export const useWebRTC = () => {
     try {
       if (!localStreamRef.current) {
          const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: { facingMode: "user" },
             audio: true,
          });
          setLocalStream(stream);
@@ -154,6 +155,34 @@ export const useWebRTC = () => {
       }
     }
   }, [isScreenSharing, stopScreenShare]);
+
+  const flipCamera = useCallback(async () => {
+    try {
+      const newMode = facingMode === "user" ? "environment" : "user";
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newMode },
+      });
+      const newVideoTrack = stream.getVideoTracks()[0];
+
+      if (localStreamRef.current) {
+        const oldVideoTrack = localStreamRef.current.getVideoTracks()[0];
+        if (oldVideoTrack) oldVideoTrack.stop();
+        localStreamRef.current.removeTrack(oldVideoTrack);
+        localStreamRef.current.addTrack(newVideoTrack);
+        setLocalStream(new MediaStream(localStreamRef.current.getTracks()));
+      }
+
+      if (peerConnectionRef.current) {
+        const sender = peerConnectionRef.current.getSenders().find(s => s.track?.kind === 'video');
+        if (sender) {
+          await sender.replaceTrack(newVideoTrack);
+        }
+      }
+      setFacingMode(newMode);
+    } catch (error) {
+      console.error("Error flipping camera:", error);
+    }
+  }, [facingMode]);
 
   const cleanupConnection = useCallback(() => {
     if (channelRef.current) {
@@ -460,6 +489,8 @@ export const useWebRTC = () => {
     toggleCamera,
     isScreenSharing,
     toggleScreenShare,
+    flipCamera,
+    facingMode,
     remoteUsername,
     initializeMedia,
     onlineUsers,
