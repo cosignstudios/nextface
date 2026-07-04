@@ -25,8 +25,16 @@ import {
   Eraser
 } from "lucide-react";
 
+const aspectRatios = [
+  { label: '16:9', class: 'lg:aspect-video' },
+  { label: '1:1', class: 'lg:aspect-square' },
+  { label: '9:16', class: 'lg:aspect-[9/16]' },
+  { label: '3:2', class: 'lg:aspect-[3/2]' }
+];
+
 const Chat = () => {
   const { deleteAccount } = useAuth();
+  const [activeRatioIndex, setActiveRatioIndex] = useState(0);
   const { 
     themeMode, 
     updateSetting, 
@@ -173,7 +181,24 @@ const Chat = () => {
 
         {/* Left Column: The Stage */}
         <section className="absolute lg:relative inset-0 lg:inset-auto flex-grow flex flex-col gap-0 lg:gap-6 min-w-0 z-0 lg:z-auto items-center justify-center">
-          <div className="w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] lg:aspect-video lg:card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden shrink-0">
+          <div className={`w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] ${aspectRatios[activeRatioIndex].class} lg:card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden shrink-0`}>
+            {/* Aspect Ratio Selector (Desktop Only) */}
+            <div className="absolute top-4 left-4 z-20 hidden lg:flex items-center gap-1 bg-black/60 backdrop-blur-md p-1 border border-white/10 rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {aspectRatios.map((ratio, idx) => (
+                <button
+                  key={ratio.label}
+                  onClick={() => setActiveRatioIndex(idx)}
+                  className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded transition-all ${
+                    activeRatioIndex === idx 
+                      ? 'bg-white text-black shadow-sm' 
+                      : 'text-white/50 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {ratio.label}
+                </button>
+              ))}
+            </div>
+
             {!remoteStream && (
                 <div className="flex flex-col items-center gap-6 text-center px-10 z-10 relative">
                   <div className="w-16 h-16 md:w-24 md:h-24 border-4 border-black bg-brutal-yellow flex items-center justify-center shadow-brutal animate-bounce mb-2 md:mb-4 rotate-3">
