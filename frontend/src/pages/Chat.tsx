@@ -255,7 +255,7 @@ const Chat = () => {
                     className="btn-brutal bg-brutal-green px-4 md:px-16 py-2.5 md:py-4 text-xs md:text-base whitespace-nowrap shrink-0"
                   >
                     <SkipForward className="w-4 h-4 md:w-6 md:h-6 fill-black" />
-                    <span>Next Match</span>
+                    <span>Next Face</span>
                   </button>
                   <button 
                     onClick={stop} 
