@@ -7,6 +7,8 @@
 
 NextFace is a modern, real-time random video chat application engineered to operate with **zero server costs**. By entirely bypassing traditional Node.js/WebSocket backends and relying on Edge-based matchmaking and Peer-to-Peer connections, NextFace can scale to thousands of concurrent users for free.
 
+![alt text](image.png) ![alt text](image-2.png) ![alt text](image-3.png)
+
 ## 🚀 Architecture & Tech Stack
 
 NextFace utilizes a bleeding-edge serverless architecture:
@@ -16,6 +18,8 @@ NextFace utilizes a bleeding-edge serverless architecture:
 - **Real-Time Signaling**: Supabase Realtime Channels (for ephemeral WebRTC handshakes)
 - **Matchmaking Engine**: Cloudflare Workers + Cloudflare D1
 - **Video & Text Chat**: 100% Peer-to-Peer WebRTC (RTCDataChannel & MediaStream)
+
+![alt text](image-1.png) ![alt text](image-4.png) ![alt text](image-5.png)
 
 ## 🧠 How The Serverless Engine Works
 
