@@ -259,7 +259,7 @@ export const useWebRTC = () => {
     }
   }, [userId, setupDataChannel, handlePeerDisconnect]);
 
-  const connectToSupabaseRoom = useCallback(async (roomId: string, isInitiator: boolean) => {
+  async function connectToSupabaseRoom(roomId: string, isInitiator: boolean) {
     const stream = localStreamRef.current || await initializeMedia();
     if (!stream) return;
 
@@ -316,9 +316,9 @@ export const useWebRTC = () => {
           }, 8000);
         }
       });
-  }, [userId, initializeMedia, createPeerConnection, cleanupConnection, pollForMatch]);
+  }
 
-  const pollForMatch = useCallback(async () => {
+  async function pollForMatch() {
     if (!isMatchingRef.current) return;
     
     try {
@@ -345,7 +345,7 @@ export const useWebRTC = () => {
       // Retry on failure
       setTimeout(pollForMatch, 3000);
     }
-  }, [userId, connectToSupabaseRoom]);
+  }
 
   const start = async () => {
     await initializeMedia();
