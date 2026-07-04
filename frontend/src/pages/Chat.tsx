@@ -253,7 +253,7 @@ const Chat = () => {
             </div>
 
             {!remoteStream && (
-                <div className="flex flex-col items-center gap-6 text-center px-10 z-10 relative">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 text-center px-10 z-10">
                   <div className="w-16 h-16 md:w-24 md:h-24 border-4 border-black bg-brutal-yellow flex items-center justify-center shadow-brutal animate-bounce mb-2 md:mb-4 rotate-3">
                      <VideoIcon className="w-8 h-8 md:w-12 md:h-12 text-black" />
                   </div>
