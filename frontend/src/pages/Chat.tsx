@@ -52,7 +52,6 @@ const Chat = () => {
     next, 
     stop, 
     sendMessage,
-    remoteUsername,
     isMicOn,
     isCameraOn,
     toggleMic,
