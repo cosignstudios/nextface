@@ -107,10 +107,10 @@ const Chat = () => {
   return (
     <div className="flex flex-col h-screen bg-brutal-bg text-[var(--text-color)] font-body overflow-hidden">
       {/* Top Navbar */}
-      <header className="h-16 bg-[var(--surface-white)] border-b-2 border-black px-8 flex justify-between items-center shrink-0 z-50">
+      <header className="h-16 bg-[var(--surface-white)] border-b-2 border-black px-4 md:px-8 flex justify-between items-center shrink-0 z-50">
         <Link to="/" className="flex items-center gap-3 transition-transform hover:rotate-1 hover:scale-105">
-          <img src="/NextFace.svg" alt="NextFace Logo" className="w-11 h-11 object-contain" />
-          <h1 className="text-2xl font-fancy tracking-wider text-[var(--text-color)]">
+          <img src="/NextFace.svg" alt="NextFace Logo" className="w-8 h-8 md:w-11 md:h-11 object-contain" />
+          <h1 className="text-xl md:text-2xl font-fancy tracking-wider text-[var(--text-color)]">
             Next<span className="text-brutal-accent drop-shadow-[2px_2px_0_#000]">Face</span>
           </h1>
         </Link>
@@ -156,17 +156,17 @@ const Chat = () => {
 
 
       {/* Main Content Area */}
-      <main className="flex flex-1 min-h-0 w-full overflow-hidden p-6 gap-6">
+      <main className="flex flex-col lg:flex-row flex-1 min-h-0 w-full overflow-hidden p-2 lg:p-6 gap-2 lg:gap-6">
 
         {/* Left Column: The Stage */}
         <section className="flex-grow flex flex-col gap-6 min-w-0">
           <div className="flex-grow card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden">
             {!remoteStream && (
                 <div className="flex flex-col items-center gap-6 text-center px-10 z-10 relative">
-                  <div className="w-24 h-24 border-4 border-black bg-brutal-yellow flex items-center justify-center shadow-brutal animate-bounce mb-4 rotate-3">
-                     <VideoIcon className="w-12 h-12 text-black" />
+                  <div className="w-16 h-16 md:w-24 md:h-24 border-4 border-black bg-brutal-yellow flex items-center justify-center shadow-brutal animate-bounce mb-2 md:mb-4 rotate-3">
+                     <VideoIcon className="w-8 h-8 md:w-12 md:h-12 text-black" />
                   </div>
-                  <h2 className="text-3xl font-black text-white tracking-tighter uppercase italic">
+                  <h2 className="text-xl md:text-3xl font-black text-white tracking-tighter uppercase italic">
                     {status === "idle" ? "Ready to begin?" : status === "waiting" ? "Searching for Peer..." : "Syncing Phase..."}
                   </h2>
                   <p className="font-bold uppercase text-xs tracking-tight text-white/70">
@@ -203,55 +203,55 @@ const Chat = () => {
           </div>
 
           {/* Controls Dashboard */}
-          <div className="h-24 card-brutal bg-[var(--surface-white)] flex items-center justify-between px-10 shrink-0">
-            <div className="flex gap-4">
+          <div className="h-auto lg:h-24 py-4 lg:py-0 card-brutal bg-[var(--surface-white)] flex flex-wrap items-center justify-center lg:justify-between gap-4 px-4 lg:px-10 shrink-0">
+            <div className="flex gap-2 md:gap-4">
               <button
                 onClick={toggleMic}
-                className={`w-14 h-14 btn-brutal !p-0 ${isMicOn ? 'bg-white' : 'bg-brutal-pink translate-x-[4px] translate-y-[4px] shadow-none'}`}
+                className={`w-12 h-12 md:w-14 md:h-14 btn-brutal !p-0 ${isMicOn ? 'bg-white' : 'bg-brutal-pink translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
                 title={isMicOn ? "Mute Microphone" : "Unmute Microphone"}
               >
-                {isMicOn ? <Mic className="w-7 h-7" /> : <MicOff className="w-7 h-7" />}
+                {isMicOn ? <Mic className="w-6 h-6 md:w-7 md:h-7" /> : <MicOff className="w-6 h-6 md:w-7 md:h-7" />}
               </button>
               <button
                 onClick={toggleCamera}
-                className={`w-14 h-14 btn-brutal !p-0 ${isCameraOn ? 'bg-white' : 'bg-brutal-pink translate-x-[4px] translate-y-[4px] shadow-none'}`}
+                className={`w-12 h-12 md:w-14 md:h-14 btn-brutal !p-0 ${isCameraOn ? 'bg-white' : 'bg-brutal-pink translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
                 title={isCameraOn ? "Disable Camera" : "Enable Camera"}
               >
-                {isCameraOn ? <VideoIcon className="w-7 h-7" /> : <VideoOff className="w-7 h-7" />}
+                {isCameraOn ? <VideoIcon className="w-6 h-6 md:w-7 md:h-7" /> : <VideoOff className="w-6 h-6 md:w-7 md:h-7" />}
               </button>
               <button
                 onClick={toggleScreenShare}
-                className={`w-14 h-14 btn-brutal !p-0 ${!isScreenSharing ? 'bg-white' : 'bg-brutal-green translate-x-[4px] translate-y-[4px] shadow-none'}`}
+                className={`w-12 h-12 md:w-14 md:h-14 btn-brutal hidden sm:flex !p-0 ${!isScreenSharing ? 'bg-white' : 'bg-brutal-green translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
                 title={isScreenSharing ? "Stop Sharing" : "Share Screen"}
               >
-                {isScreenSharing ? <MonitorOff className="w-7 h-7" /> : <MonitorUp className="w-7 h-7" />}
+                {isScreenSharing ? <MonitorOff className="w-6 h-6 md:w-7 md:h-7" /> : <MonitorUp className="w-6 h-6 md:w-7 md:h-7" />}
               </button>
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 md:gap-6">
               {status === "idle" ? (
                 <button 
                   onClick={start} 
-                  className="btn-brutal bg-brutal-accent px-16 py-4 text-base"
+                  className="btn-brutal bg-brutal-accent px-8 md:px-16 py-3 md:py-4 text-sm md:text-base"
                 >
-                  <Play className="w-6 h-6 fill-black" />
+                  <Play className="w-5 h-5 md:w-6 md:h-6 fill-black" />
                   <span>Execute Start</span>
                 </button>
               ) : (
                 <>
                   <button 
                     onClick={next} 
-                    className="btn-brutal bg-brutal-green px-16 py-4 text-base"
+                    className="btn-brutal bg-brutal-green px-8 md:px-16 py-3 md:py-4 text-sm md:text-base"
                   >
-                    <SkipForward className="w-6 h-6 fill-black" />
+                    <SkipForward className="w-5 h-5 md:w-6 md:h-6 fill-black" />
                     <span>Next Match</span>
                   </button>
                   <button 
                     onClick={stop} 
-                    className="w-16 h-16 btn-brutal bg-[var(--surface-white)] !p-0"
+                    className="w-12 h-12 md:w-16 md:h-16 btn-brutal bg-[var(--surface-white)] !p-0"
                     title="Stop Session"
                   >
-                    <Square className="w-7 h-7 fill-black" />
+                    <Square className="w-6 h-6 md:w-7 md:h-7 fill-black" />
                   </button>
                 </>
               )}
@@ -262,7 +262,7 @@ const Chat = () => {
         </section>
 
         {/* Right Column: Unified Immersive Sidebar */}
-        <aside className="w-80 lg:w-96 shrink-0 h-full overflow-hidden">
+        <aside className="w-full lg:w-80 xl:w-96 shrink-0 h-[40vh] lg:h-full overflow-hidden">
           <div className="h-full card-brutal !p-0 bg-black relative flex flex-col group overflow-hidden">
             
             {/* Full-Height Local Feed */}
@@ -276,7 +276,7 @@ const Chat = () => {
             
             {!isCameraOn && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                <VideoOff className="w-16 h-16 text-white/20" />
+                <VideoOff className="w-10 h-10 md:w-16 md:h-16 text-white/20" />
               </div>
             )}
 

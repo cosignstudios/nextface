@@ -12,9 +12,9 @@ const LandingPage = () => {
         <section className="max-w-7xl mx-auto px-6 pt-12 pb-24 text-center">
 
           
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[0.9] uppercase">
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-8 md:mb-10 leading-[0.9] uppercase">
             Connect <br />
-            <span className="bg-brutal-yellow px-4 border-2 border-black inline-block transform rotate-1 shadow-brutal text-black">Beyond</span> <br />
+            <span className="bg-brutal-yellow px-2 md:px-4 border-2 border-black inline-block transform rotate-1 shadow-brutal text-black">Beyond</span> <br />
             The Algorithm
           </h1>
           

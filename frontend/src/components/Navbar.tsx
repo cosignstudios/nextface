@@ -13,13 +13,13 @@ const Navbar = () => {
   if (location.pathname === "/chat") return null;
 
   return (
-    <nav className="fixed top-6 left-6 right-6 z-50">
-      <div className="max-w-7xl mx-auto card-brutal !py-4 !px-8 flex justify-between items-center bg-[var(--surface-white)]">
-        <Link to="/" className="flex items-center gap-3 transition-transform hover:rotate-1 hover:scale-105">
-          <img src="/NextFace.svg" alt="NextFace Logo" className="w-11 h-11 object-contain" />
+    <nav className="fixed top-4 left-4 right-4 md:top-6 md:left-6 md:right-6 z-50">
+      <div className="max-w-7xl mx-auto card-brutal !py-3 !px-4 md:!py-4 md:!px-8 flex justify-between items-center bg-[var(--surface-white)]">
+        <Link to="/" className="flex items-center gap-2 md:gap-3 transition-transform hover:rotate-1 hover:scale-105">
+          <img src="/NextFace.svg" alt="NextFace Logo" className="w-8 h-8 md:w-11 md:h-11 object-contain" />
 
-          <span className="text-3xl font-black tracking-tighter text-[var(--text-color)] uppercase">
-            Next<span className="text-brutal-blue drop-shadow-[3px_3px_0_#000]">Face</span>
+          <span className="text-2xl md:text-3xl font-black tracking-tighter text-[var(--text-color)] uppercase">
+            Next<span className="text-brutal-blue drop-shadow-[2px_2px_0_#000] md:drop-shadow-[3px_3px_0_#000]">Face</span>
           </span>
         </Link>
 
