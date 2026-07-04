@@ -24,21 +24,21 @@ const Navbar = () => {
         </Link>
 
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 md:gap-6">
           <button 
             onClick={() => updateSetting('themeMode', themeMode === 'light' ? 'dark' : themeMode === 'dark' ? 'gray' : 'light')}
-            className="p-2 border-2 border-black bg-white shadow-[calc(var(--dynamic-shadow)/2)_calc(var(--dynamic-shadow)/2)_0px_0px_#000] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all text-black"
+            className="p-1.5 md:p-2 border-2 border-black bg-white shadow-[calc(var(--dynamic-shadow)/2)_calc(var(--dynamic-shadow)/2)_0px_0px_#000] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all text-black"
              title={`Switch theme: ${themeMode === 'light' ? 'Dark' : themeMode === 'dark' ? 'Classic Gray' : 'Light'} Mode`}
           >
-            {themeMode === 'light' && <Sun className="w-5 h-5" />}
-            {themeMode === 'dark' && <Moon className="w-5 h-5" />}
-            {themeMode === 'gray' && <Palette className="w-5 h-5" />}
+            {themeMode === 'light' && <Sun className="w-4 h-4 md:w-5 md:h-5" />}
+            {themeMode === 'dark' && <Moon className="w-4 h-4 md:w-5 md:h-5" />}
+            {themeMode === 'gray' && <Palette className="w-4 h-4 md:w-5 md:h-5" />}
           </button>
 
           {isAuthenticated ? (
             <Link
               to="/chat"
-              className="btn-brutal bg-brutal-yellow"
+              className="btn-brutal bg-brutal-yellow !px-3 !py-1.5 md:!px-8 md:!py-3 text-xs md:text-base whitespace-nowrap"
             >
               Go to Chat
             </Link>
@@ -46,7 +46,7 @@ const Navbar = () => {
             <>
               <Link
                 to="/login"
-                className="text-sm font-black uppercase tracking-widest hover:underline decoration-4 decoration-brutal-pink underline-offset-4"
+                className="text-xs md:text-sm font-black uppercase tracking-widest hover:underline decoration-4 decoration-brutal-pink underline-offset-4 whitespace-nowrap"
               >
                 Log in
               </Link>
