@@ -214,61 +214,61 @@ const Chat = () => {
           </div>
 
           {/* Controls Dashboard */}
-          <div className="absolute lg:relative bottom-0 left-0 right-0 h-auto lg:h-24 py-6 lg:py-0 lg:card-brutal bg-gradient-to-t from-black/90 via-black/50 to-transparent lg:bg-none lg:bg-[var(--surface-white)] flex flex-wrap items-center justify-center lg:justify-between gap-4 px-4 lg:px-10 shrink-0 z-50 pointer-events-auto">
-            <div className="flex gap-2 md:gap-4">
+          <div className="absolute lg:relative bottom-0 left-0 right-0 h-auto lg:h-24 py-6 lg:py-0 lg:card-brutal bg-gradient-to-t from-black/90 via-black/50 to-transparent lg:bg-none lg:bg-[var(--surface-white)] flex flex-nowrap lg:flex-wrap items-center justify-center lg:justify-between gap-2 lg:gap-4 px-2 lg:px-10 shrink-0 z-50 pointer-events-auto">
+            <div className="flex gap-2 lg:gap-4 shrink-0">
               <button
                 onClick={toggleMic}
-                className={`w-12 h-12 md:w-14 md:h-14 btn-brutal !p-0 ${isMicOn ? 'bg-white' : 'bg-brutal-pink translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
+                className={`w-10 h-10 md:w-14 md:h-14 btn-brutal !p-0 shrink-0 ${isMicOn ? 'bg-white' : 'bg-brutal-pink translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
                 title={isMicOn ? "Mute Microphone" : "Unmute Microphone"}
               >
-                {isMicOn ? <Mic className="w-6 h-6 md:w-7 md:h-7" /> : <MicOff className="w-6 h-6 md:w-7 md:h-7" />}
+                {isMicOn ? <Mic className="w-5 h-5 md:w-7 md:h-7" /> : <MicOff className="w-5 h-5 md:w-7 md:h-7" />}
               </button>
               <button
                 onClick={toggleCamera}
-                className={`w-12 h-12 md:w-14 md:h-14 btn-brutal !p-0 ${isCameraOn ? 'bg-white' : 'bg-brutal-pink translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
+                className={`w-10 h-10 md:w-14 md:h-14 btn-brutal !p-0 shrink-0 ${isCameraOn ? 'bg-white' : 'bg-brutal-pink translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
                 title={isCameraOn ? "Disable Camera" : "Enable Camera"}
               >
-                {isCameraOn ? <VideoIcon className="w-6 h-6 md:w-7 md:h-7" /> : <VideoOff className="w-6 h-6 md:w-7 md:h-7" />}
+                {isCameraOn ? <VideoIcon className="w-5 h-5 md:w-7 md:h-7" /> : <VideoOff className="w-5 h-5 md:w-7 md:h-7" />}
               </button>
               <button
                 onClick={toggleScreenShare}
-                className={`w-12 h-12 md:w-14 md:h-14 btn-brutal hidden sm:flex !p-0 ${!isScreenSharing ? 'bg-white' : 'bg-brutal-green translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
+                className={`w-10 h-10 md:w-14 md:h-14 btn-brutal hidden sm:flex !p-0 shrink-0 ${!isScreenSharing ? 'bg-white' : 'bg-brutal-green translate-x-[2px] md:translate-x-[4px] translate-y-[2px] md:translate-y-[4px] shadow-none'}`}
                 title={isScreenSharing ? "Stop Sharing" : "Share Screen"}
               >
-                {isScreenSharing ? <MonitorOff className="w-6 h-6 md:w-7 md:h-7" /> : <MonitorUp className="w-6 h-6 md:w-7 md:h-7" />}
+                {isScreenSharing ? <MonitorOff className="w-5 h-5 md:w-7 md:h-7" /> : <MonitorUp className="w-5 h-5 md:w-7 md:h-7" />}
               </button>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-6">
+            <div className="flex items-center gap-2 lg:gap-6 shrink-0">
               {status === "idle" ? (
                 <button 
                   onClick={start} 
-                  className="btn-brutal bg-brutal-accent px-8 md:px-16 py-3 md:py-4 text-sm md:text-base"
+                  className="btn-brutal bg-brutal-accent px-4 md:px-16 py-2.5 md:py-4 text-xs md:text-base whitespace-nowrap shrink-0"
                 >
-                  <Play className="w-5 h-5 md:w-6 md:h-6 fill-black" />
+                  <Play className="w-4 h-4 md:w-6 md:h-6 fill-black" />
                   <span>Execute Start</span>
                 </button>
               ) : (
                 <>
                   <button 
                     onClick={next} 
-                    className="btn-brutal bg-brutal-green px-8 md:px-16 py-3 md:py-4 text-sm md:text-base"
+                    className="btn-brutal bg-brutal-green px-4 md:px-16 py-2.5 md:py-4 text-xs md:text-base whitespace-nowrap shrink-0"
                   >
-                    <SkipForward className="w-5 h-5 md:w-6 md:h-6 fill-black" />
+                    <SkipForward className="w-4 h-4 md:w-6 md:h-6 fill-black" />
                     <span>Next Match</span>
                   </button>
                   <button 
                     onClick={stop} 
-                    className="w-12 h-12 md:w-16 md:h-16 btn-brutal bg-[var(--surface-white)] !p-0"
+                    className="w-10 h-10 md:w-16 md:h-16 btn-brutal bg-[var(--surface-white)] !p-0 shrink-0"
                     title="Stop Session"
                   >
-                    <Square className="w-6 h-6 md:w-7 md:h-7 fill-black" />
+                    <Square className="w-4 h-4 md:w-7 md:h-7 fill-black" />
                   </button>
                 </>
               )}
             </div>
             
-            <div className="w-32 hidden md:block"></div>
+            <div className="w-32 hidden lg:block"></div>
           </div>
         </section>
 
