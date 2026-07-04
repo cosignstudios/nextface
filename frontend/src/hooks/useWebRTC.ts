@@ -426,6 +426,10 @@ export const useWebRTC = () => {
     }
   };
 
+  const clearMessages = () => {
+    setMessages([]);
+  };
+
   return { 
     localStream, 
     remoteStream, 
@@ -443,7 +447,8 @@ export const useWebRTC = () => {
     toggleScreenShare,
     remoteUsername,
     initializeMedia,
-    onlineUsers
+    onlineUsers,
+    clearMessages
   };
 };
 

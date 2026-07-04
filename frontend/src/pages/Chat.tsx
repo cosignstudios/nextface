@@ -21,7 +21,8 @@ import {
   Sun,
   Moon,
   Palette,
-  ArrowLeft
+  ArrowLeft,
+  Eraser
 } from "lucide-react";
 
 const Chat = () => {
@@ -48,7 +49,8 @@ const Chat = () => {
     toggleCamera,
     isScreenSharing,
     toggleScreenShare,
-    onlineUsers
+    onlineUsers,
+    clearMessages
   } = useWebRTC();
 
   const [chatMessage, setChatMessage] = useState("");
@@ -330,6 +332,14 @@ const Chat = () => {
 
             {/* Floating Input Area */}
             <div className="absolute inset-x-4 bottom-24 lg:bottom-4 z-20 flex gap-2 bg-black/40 backdrop-blur-2xl p-2 border border-white/10 rounded-xl shadow-2xl pointer-events-auto">
+                <button
+                  onClick={clearMessages}
+                  disabled={messages.length === 0}
+                  className="w-10 h-10 flex shrink-0 items-center justify-center bg-black/40 text-white border-2 border-white/20 active:scale-95 hover:bg-white hover:text-black transition-all rounded-lg disabled:opacity-20"
+                  title="Clear Chat History"
+                >
+                  <Eraser className="w-5 h-5" />
+                </button>
                 <input
                   type="text"
                   value={chatMessage}
