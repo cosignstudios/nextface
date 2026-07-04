@@ -299,6 +299,11 @@ const Chat = () => {
                 </div>
               )}
 
+              {/* Floating Top Label */}
+              <div className="absolute top-2 right-2 lg:top-4 lg:right-4 z-10 px-2 py-1 bg-black/60 backdrop-blur-md border border-white/20 rounded-md text-[9px] lg:text-xs font-black uppercase tracking-widest text-white transition-all duration-300 pointer-events-none">
+                Me
+              </div>
+
             </div>
 
             {/* Minimalist Message History Overlay */}
