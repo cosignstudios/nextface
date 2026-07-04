@@ -7,8 +7,6 @@ import Footer from "./components/Footer";
 import LandingPage from "./pages/LandingPage";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
-import VerifyEmail from "./pages/VerifyEmail";
 import AboutUs from "./pages/AboutUs";
 import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -34,8 +32,7 @@ function AppContent() {
             <Route path="/cookies" element={<CookiesPolicy />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/verify" element={<VerifyEmail />} />
+            <Route path="/register" element={<Login />} />
             <Route
               path="/chat"
               element={
@@ -52,23 +49,16 @@ function AppContent() {
   );
 }
 
-import { GoogleOAuthProvider } from "@react-oauth/google";
-
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
 function App() {
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <Router>
-        <SettingsProvider>
-          <AuthProvider>
-            <AppContent />
-          </AuthProvider>
-        </SettingsProvider>
-      </Router>
-    </GoogleOAuthProvider>
+    <Router>
+      <SettingsProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </SettingsProvider>
+    </Router>
   );
 }
-
 
 export default App;

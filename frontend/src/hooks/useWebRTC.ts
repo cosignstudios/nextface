@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { io, Socket } from "socket.io-client";
-import type { ServerToClientEvents, ClientToServerEvents } from "../types";
+import { RealtimeChannel } from "@supabase/supabase-js";
 import { useAuth } from "../context/AuthContext";
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+import { supabase } from "../supabase";
+
+const WORKER_URL = import.meta.env.VITE_CLOUDFLARE_WORKER_URL || "YOUR_CLOUDFLARE_WORKER_URL";
+
 const STUN_SERVERS = {
   iceServers: [
     {
@@ -20,7 +22,10 @@ export interface ChatMessage {
 export type ConnectionState = "idle" | "waiting" | "connected";
 
 export const useWebRTC = () => {
-  const { token } = useAuth();
+  const { username } = useAuth(); 
+  const [userId] = useState(() => crypto.randomUUID());
+  const localUsername = username || "Stranger";
+
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -31,14 +36,16 @@ export const useWebRTC = () => {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
   const [remoteUsername, setRemoteUsername] = useState<string>("");
-  const [onlineUsers, setOnlineUsers] = useState<number>(0);
+  const [onlineUsers] = useState<number>(0);
   const remoteUsernameRef = useRef<string>("");
 
-  const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+  const dataChannelRef = useRef<RTCDataChannel | null>(null);
   const currentRoomIdRef = useRef<string | null>(null);
-  const localStreamRef = useRef<MediaStream | null>(null); // For event closures
+  const localStreamRef = useRef<MediaStream | null>(null);
   const screenStreamRef = useRef<MediaStream | null>(null);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+  const isMatchingRef = useRef<boolean>(false);
 
   const initializeMedia = useCallback(async () => {
     try {
@@ -56,9 +63,8 @@ export const useWebRTC = () => {
       console.error("Error accessing media devices.", error);
       return null;
     }
-  }, []); // Stable initialization
+  }, []);
 
-  // Independent track syncing
   useEffect(() => {
     if (localStream) {
       localStream.getAudioTracks().forEach(t => (t.enabled = isMicOn));
@@ -85,15 +91,12 @@ export const useWebRTC = () => {
       }
     }
 
-    // Revert local stream view
     if (localStreamRef.current) {
         setLocalStream(new MediaStream(localStreamRef.current.getTracks()));
     }
-
     setIsScreenSharing(false);
   }, [isScreenSharing]);
 
-  // Handle screen share cleanup when connection drops
   useEffect(() => {
     if (status !== "connected" && isScreenSharing) {
         stopScreenShare();
@@ -116,13 +119,9 @@ export const useWebRTC = () => {
           }
         }
 
-        // Update local view
         setLocalStream(stream);
 
-        screenTrack.onended = () => {
-          stopScreenShare();
-        };
-
+        screenTrack.onended = () => stopScreenShare();
         setIsScreenSharing(true);
       } catch (err) {
         console.error("Error starting screen share:", err);
@@ -131,33 +130,101 @@ export const useWebRTC = () => {
   }, [isScreenSharing, stopScreenShare]);
 
   const cleanupConnection = useCallback(() => {
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+    if (dataChannelRef.current) {
+      dataChannelRef.current.close();
+      dataChannelRef.current = null;
+    }
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
       peerConnectionRef.current = null;
     }
     setRemoteStream(null);
     setRemoteUsername("");
-    remoteUsernameRef.current = ""; // Clear ref as well
+    remoteUsernameRef.current = "";
     currentRoomIdRef.current = null;
+    isMatchingRef.current = false;
   }, []);
 
-  const createPeerConnection = useCallback((roomId: string, isInitiator: boolean, stream: MediaStream) => {
+  const setupDataChannel = useCallback((channel: RTCDataChannel) => {
+    channel.onopen = () => {
+      console.log("Data channel opened! Disconnecting from Supabase Realtime to save resources.");
+      // P2P Takeover: We drop the Supabase connection because we can now chat directly
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+      // Send our username to the peer
+      channel.send(JSON.stringify({ type: 'username', username: localUsername }));
+    };
+
+    channel.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'chat') {
+        setMessages((prev) => [...prev, { sender: "stranger", text: data.message }]);
+      } else if (data.type === 'username') {
+        setRemoteUsername(data.username);
+        remoteUsernameRef.current = data.username;
+      } else if (data.type === 'disconnect') {
+        handlePeerDisconnect();
+      }
+    };
+
+    channel.onclose = () => {
+      console.log("Data channel closed.");
+      handlePeerDisconnect();
+    };
+
+    dataChannelRef.current = channel;
+  }, [localUsername]);
+
+  const handlePeerDisconnect = useCallback(() => {
+    const name = remoteUsernameRef.current;
+    cleanupConnection();
+    setStatus("waiting");
+    setMessages((prev) => [...prev, { sender: "stranger", text: `${name || 'Stranger'} has disconnected.` }]);
+    // Optionally automatically start finding next match here
+  }, [cleanupConnection]);
+
+  const createPeerConnection = useCallback((roomId: string, isInitiator: boolean, stream: MediaStream, channel: RealtimeChannel) => {
     const pc = new RTCPeerConnection(STUN_SERVERS);
     peerConnectionRef.current = pc;
     currentRoomIdRef.current = roomId;
 
     stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
+    // Setup Data Channel for Chat and Signaling (P2P takeover)
+    if (isInitiator) {
+      const dataChannel = pc.createDataChannel("chat");
+      setupDataChannel(dataChannel);
+    } else {
+      pc.ondatachannel = (event) => {
+        setupDataChannel(event.channel);
+      };
+    }
+
     pc.ontrack = (event) => {
-      console.log("Track received!", event.streams[0]);
       if (event.streams && event.streams[0]) {
         setRemoteStream(event.streams[0]);
       }
     };
 
     pc.onicecandidate = (event) => {
-      if (event.candidate && socketRef.current) {
-        socketRef.current.emit("send-ice-candidate", { roomId, candidate: event.candidate });
+      if (event.candidate) {
+        channel.send({
+          type: 'broadcast',
+          event: 'ice-candidate',
+          payload: { candidate: event.candidate, senderId: userId }
+        });
+      }
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+        handlePeerDisconnect();
       }
     };
 
@@ -165,119 +232,116 @@ export const useWebRTC = () => {
       pc.createOffer()
         .then((offer) => pc.setLocalDescription(offer))
         .then(() => {
-          socketRef.current?.emit("send-offer", { roomId, offer: pc.localDescription! });
+          channel.send({
+            type: 'broadcast',
+            event: 'offer',
+            payload: { offer: pc.localDescription!, senderId: userId }
+          });
         })
         .catch((e) => console.error("Error creating offer", e));
     }
-  }, []);
+  }, [userId, setupDataChannel, handlePeerDisconnect]);
 
-  useEffect(() => {
-    if (!token) return;
+  const connectToSupabaseRoom = useCallback(async (roomId: string, isInitiator: boolean) => {
+    const stream = localStreamRef.current || await initializeMedia();
+    if (!stream) return;
 
-    const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io(SOCKET_URL, {
-      auth: { token },
-    });
-    socketRef.current = newSocket;
+    const channel = supabase.channel(`room:${roomId}`);
+    channelRef.current = channel;
 
-    newSocket.on("connect", () => {
-      console.log("[SOCKET] Connected to backend signaling server:", newSocket.id);
-    });
+    channel
+      .on('broadcast', { event: 'offer' }, async ({ payload }) => {
+        if (payload.senderId === userId || !peerConnectionRef.current) return;
+        try {
+          await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(payload.offer));
+          const answer = await peerConnectionRef.current.createAnswer();
+          await peerConnectionRef.current.setLocalDescription(answer);
+          channel.send({
+            type: 'broadcast',
+            event: 'answer',
+            payload: { answer, senderId: userId }
+          });
+        } catch (err) {
+          console.error("Error handling offer", err);
+        }
+      })
+      .on('broadcast', { event: 'answer' }, async ({ payload }) => {
+        if (payload.senderId === userId || !peerConnectionRef.current) return;
+        try {
+          await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(payload.answer));
+        } catch (err) {
+          console.error("Error handling answer", err);
+        }
+      })
+      .on('broadcast', { event: 'ice-candidate' }, async ({ payload }) => {
+        if (payload.senderId === userId || !peerConnectionRef.current) return;
+        try {
+          await peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(payload.candidate));
+        } catch (err) {
+          console.error("Error handling ice candidate", err);
+        }
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log(`Subscribed to Supabase Room ${roomId}`);
+          createPeerConnection(roomId, isInitiator, stream, channel);
+        }
+      });
+  }, [userId, initializeMedia, createPeerConnection]);
 
-    newSocket.on("connect_error", (err) => {
-      console.error("[SOCKET] Connection error:", err.message);
-    });
-
-    newSocket.on("user-paired", async ({ roomId, isInitiator, remoteUsername }) => {
-      console.log("Match found! Remote user:", remoteUsername, "Room:", roomId);
-      setStatus("connected");
-      setRemoteUsername(remoteUsername);
-      remoteUsernameRef.current = remoteUsername;
-      setMessages([]); // clear chat on new connection
+  const pollForMatch = useCallback(async () => {
+    if (!isMatchingRef.current) return;
+    
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
       
-      const stream = localStreamRef.current || await initializeMedia();
-      if (stream) {
-          createPeerConnection(roomId, isInitiator, stream);
+      const data = await res.json();
+      
+      if (!isMatchingRef.current) return; // User stopped while waiting
+      
+      if (data.status === "matched") {
+        setStatus("connected");
+        setMessages([]);
+        connectToSupabaseRoom(data.roomId, data.isInitiator);
+      } else if (data.status === "waiting" || data.status === "retry") {
+        // Long poll finished without a match, loop again
+        setTimeout(pollForMatch, 1000);
       }
-    });
-
-    newSocket.on("user-disconnected", () => {
-      const name = remoteUsernameRef.current;
-      cleanupConnection();
-      setStatus("waiting");
-      setMessages((prev) => [...prev, { sender: "stranger", text: `${name || 'Stranger'} has disconnected.` }]);
-    });
-
-    newSocket.on("receive-offer", async ({ offer, roomId }) => {
-      if (!peerConnectionRef.current) return;
-      try {
-        await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await peerConnectionRef.current.createAnswer();
-        await peerConnectionRef.current.setLocalDescription(answer);
-        newSocket.emit("send-answer", { roomId, answer });
-      } catch (err) {
-        console.error("Error handling offer", err);
-      }
-    });
-
-    newSocket.on("receive-answer", async ({ answer }) => {
-      if (!peerConnectionRef.current) return;
-      try {
-        await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(answer));
-      } catch (err) {
-        console.error("Error handling answer", err);
-      }
-    });
-
-    newSocket.on("receive-ice-candidate", async ({ candidate }) => {
-      if (!peerConnectionRef.current) return;
-      try {
-        await peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (err) {
-        console.error("Error handling ice candidate", err);
-      }
-    });
-
-    newSocket.on("receive-chat-message", ({ message }) => {
-      setMessages((prev) => [...prev, { sender: "stranger", text: message }]);
-    });
-
-    newSocket.on("online-users-count", ({ count }) => {
-      setOnlineUsers(count);
-    });
-
-    // Auto-initialize media on mount
-    initializeMedia();
-
-    return () => {
-      cleanupConnection();
-      if (screenStreamRef.current) {
-        screenStreamRef.current.getTracks().forEach(t => t.stop());
-        screenStreamRef.current = null;
-      }
-      if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach(t => t.stop());
-        localStreamRef.current = null;
-      }
-      newSocket.disconnect();
-    };
-  }, [token]); // token is the only dependency that should restart everything
+    } catch (err) {
+      console.error("Error matching:", err);
+      // Retry on failure
+      setTimeout(pollForMatch, 3000);
+    }
+  }, [userId, connectToSupabaseRoom]);
 
   const start = async () => {
     await initializeMedia();
     setStatus("waiting");
-    socketRef.current?.emit("join-queue");
+    isMatchingRef.current = true;
+    pollForMatch();
   };
 
   const next = () => {
+    // Notify peer before closing
+    if (dataChannelRef.current && dataChannelRef.current.readyState === 'open') {
+      dataChannelRef.current.send(JSON.stringify({ type: 'disconnect' }));
+    }
     cleanupConnection();
     setStatus("waiting");
-    setMessages([]); // Clear chat explicitly when moving to next
-    socketRef.current?.emit("next-user");
+    setMessages([]);
+    isMatchingRef.current = true;
+    pollForMatch();
   };
 
   const stop = () => {
+    if (dataChannelRef.current && dataChannelRef.current.readyState === 'open') {
+      dataChannelRef.current.send(JSON.stringify({ type: 'disconnect' }));
+    }
     cleanupConnection();
-    socketRef.current?.emit("leave-queue");
     setStatus("idle");
     setMessages([]);
     if (localStreamRef.current) {
@@ -297,8 +361,14 @@ export const useWebRTC = () => {
 
   const sendMessage = (text: string) => {
     if (text.trim() === "" || !currentRoomIdRef.current) return;
+    
     setMessages((prev) => [...prev, { sender: "you", text }]);
-    socketRef.current?.emit("send-chat-message", { roomId: currentRoomIdRef.current, message: text });
+    
+    if (dataChannelRef.current && dataChannelRef.current.readyState === 'open') {
+      dataChannelRef.current.send(JSON.stringify({ type: 'chat', message: text }));
+    } else {
+      console.warn("Data channel is not open, cannot send message.");
+    }
   };
 
   return { 
@@ -320,7 +390,6 @@ export const useWebRTC = () => {
     initializeMedia,
     onlineUsers
   };
-
 };
 
 export default useWebRTC;

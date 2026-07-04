@@ -10,9 +10,7 @@ const LandingPage = () => {
       <main className="flex-grow pt-24 pb-16">
         {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-6 pt-12 pb-24 text-center">
-          <div className="inline-block border-2 border-black bg-[var(--surface-white)] px-6 py-2 shadow-brutal mb-12 transform -rotate-1">
-             <span className="font-black uppercase tracking-widest text-sm">NextFace Protocol v1.0</span>
-          </div>
+
           
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[0.9] uppercase">
             Connect <br />

@@ -41,3 +41,6 @@ frontend/build_output.txt
 frontend/lint.txt
 frontend/lint_results.json
 frontend/lint_utf8.txt
+
+# Cloudflare
+.wrangler/
