@@ -80,6 +80,7 @@ const Chat = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const remoteContainerRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const Chat = () => {
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
-      remoteContainerRef.current?.requestFullscreen().catch(err => {
+      mainRef.current?.requestFullscreen().catch(err => {
         console.error("Error attempting to enable fullscreen:", err);
       });
     } else {
@@ -190,7 +191,7 @@ const Chat = () => {
 
 
       {/* Main Content Area */}
-      <main className="relative flex flex-col lg:flex-row flex-1 min-h-0 w-full overflow-hidden p-0 lg:p-6 gap-0 lg:gap-6 bg-black lg:bg-transparent">
+      <main ref={mainRef} className={`relative flex flex-col lg:flex-row flex-1 min-h-0 w-full overflow-hidden p-0 lg:p-6 gap-0 lg:gap-6 bg-black lg:bg-transparent ${isFullScreen ? 'lg:!bg-black lg:!p-0 lg:!gap-0' : ''}`}>
 
         {/* Mobile Back Button (Floating) */}
         <Link 
@@ -297,7 +298,7 @@ const Chat = () => {
           </div>
 
           {/* Controls Dashboard */}
-          <div className="absolute lg:relative bottom-0 left-0 right-0 h-auto lg:h-24 py-6 lg:py-0 lg:card-brutal bg-gradient-to-t from-black/90 via-black/50 to-transparent lg:bg-none lg:bg-[var(--surface-white)] flex flex-nowrap lg:flex-wrap items-center justify-center lg:justify-between gap-2 lg:gap-4 px-2 lg:px-10 shrink-0 z-50 pointer-events-auto">
+          <div className={`absolute lg:relative bottom-0 left-0 right-0 h-auto lg:h-24 py-6 lg:py-0 lg:card-brutal bg-gradient-to-t from-black/90 via-black/50 to-transparent lg:bg-none lg:bg-[var(--surface-white)] flex flex-nowrap lg:flex-wrap items-center justify-center lg:justify-between gap-2 lg:gap-4 px-2 lg:px-10 shrink-0 z-50 pointer-events-auto ${isFullScreen ? 'lg:!absolute lg:!bottom-12 lg:!left-1/2 lg:!-translate-x-1/2 lg:!w-auto lg:!bg-transparent lg:!border-none lg:!shadow-none lg:!p-0 lg:!gap-8 lg:!z-[60] lg:!rounded-full lg:!backdrop-blur-none' : ''}`}>
             <div className="flex gap-2 lg:gap-4 shrink-0">
               <button
                 onClick={toggleMic}
@@ -356,11 +357,11 @@ const Chat = () => {
         </section>
 
         {/* Right Column: Unified Immersive Sidebar */}
-        <aside className="absolute lg:relative inset-0 lg:inset-auto pointer-events-none lg:pointer-events-auto w-full lg:w-80 xl:w-96 shrink-0 h-full overflow-hidden z-10 lg:z-auto">
-          <div className="h-full lg:card-brutal !p-0 bg-transparent lg:bg-black relative flex flex-col group overflow-hidden">
+        <aside className={`absolute lg:relative inset-0 lg:inset-auto pointer-events-none lg:pointer-events-auto w-full lg:w-80 xl:w-96 shrink-0 h-full overflow-hidden z-10 lg:z-auto ${isFullScreen ? 'lg:!absolute lg:!bottom-6 lg:!right-6 lg:!w-64 lg:!h-48 lg:!z-50 lg:!overflow-visible lg:!inset-auto lg:!pointer-events-auto' : ''}`}>
+          <div className={`h-full lg:card-brutal !p-0 bg-transparent lg:bg-black relative flex flex-col group overflow-hidden ${isFullScreen ? 'lg:!bg-transparent lg:!border-none lg:!shadow-none' : ''}`}>
             
             {/* Local Feed */}
-            <div className="absolute top-4 right-4 lg:inset-0 w-24 h-36 md:w-32 md:h-48 lg:w-full lg:h-full rounded-xl lg:rounded-none overflow-hidden shadow-2xl lg:shadow-none pointer-events-auto border border-white/30 lg:border-none z-50 lg:z-0 bg-black">
+            <div className={`absolute top-4 right-4 lg:inset-0 w-24 h-36 md:w-32 md:h-48 lg:w-full lg:h-full rounded-xl lg:rounded-none overflow-hidden shadow-2xl lg:shadow-none pointer-events-auto border border-white/30 lg:border-none z-50 lg:z-0 bg-black ${isFullScreen ? 'lg:!rounded-xl lg:!shadow-2xl lg:!border lg:!border-white/20' : ''}`}>
               <video
                 ref={localVideoRef}
                 className={`absolute inset-0 w-full h-full object-cover ${!isScreenSharing ? "-scale-x-100" : ""} ${localStream && (isCameraOn || isScreenSharing) ? "opacity-100" : "opacity-0"} transition-opacity duration-1000`}
@@ -383,7 +384,7 @@ const Chat = () => {
             </div>
 
             {/* Minimalist Message History Overlay */}
-            <div className="absolute inset-x-4 bottom-40 lg:bottom-20 z-20 flex flex-col gap-2 min-h-0 max-h-[40%] lg:max-h-[60%] pointer-events-none">
+            <div className={`absolute inset-x-4 bottom-40 lg:bottom-20 z-20 flex flex-col gap-2 min-h-0 max-h-[40%] lg:max-h-[60%] pointer-events-none ${isFullScreen ? 'lg:hidden' : ''}`}>
               <div className="flex-grow overflow-y-auto p-2 flex flex-col gap-2 no-scrollbar pointer-events-auto">
                 {messages.length === 0 ? (
                   <div className="my-auto text-center px-4 py-8">
@@ -415,7 +416,7 @@ const Chat = () => {
             </div>
 
             {/* Floating Input Area */}
-            <div className="absolute inset-x-4 bottom-24 lg:bottom-4 z-20 flex gap-2 bg-black/40 backdrop-blur-2xl p-2 border border-white/10 rounded-xl shadow-2xl pointer-events-auto">
+            <div className={`absolute inset-x-4 bottom-24 lg:bottom-4 z-20 flex gap-2 bg-black/40 backdrop-blur-2xl p-2 border border-white/10 rounded-xl shadow-2xl pointer-events-auto ${isFullScreen ? 'lg:hidden' : ''}`}>
                 <button
                   onClick={clearMessages}
                   disabled={messages.length === 0}
