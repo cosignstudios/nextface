@@ -384,7 +384,7 @@ const Chat = () => {
             </div>
 
             {/* Minimalist Message History Overlay */}
-            <div className={`absolute inset-x-4 bottom-40 lg:bottom-20 z-20 flex flex-col gap-2 min-h-0 max-h-[40%] lg:max-h-[60%] pointer-events-none ${isFullScreen ? 'lg:hidden' : ''}`}>
+            <div className={`absolute inset-x-4 bottom-40 lg:bottom-20 z-20 flex flex-col gap-2 min-h-0 max-h-[40%] lg:max-h-[60%] pointer-events-none ${isFullScreen ? 'lg:!inset-auto lg:!bottom-24 lg:!left-6 lg:!w-[300px] lg:!max-h-[50%]' : ''}`}>
               <div className="flex-grow overflow-y-auto p-2 flex flex-col gap-2 no-scrollbar pointer-events-auto">
                 {messages.length === 0 ? (
                   <div className="my-auto text-center px-4 py-8">
@@ -416,7 +416,7 @@ const Chat = () => {
             </div>
 
             {/* Floating Input Area */}
-            <div className={`absolute inset-x-4 bottom-24 lg:bottom-4 z-20 flex gap-2 bg-black/40 backdrop-blur-2xl p-2 border border-white/10 rounded-xl shadow-2xl pointer-events-auto ${isFullScreen ? 'lg:hidden' : ''}`}>
+            <div className={`absolute inset-x-4 bottom-24 lg:bottom-4 z-20 flex gap-2 bg-black/40 backdrop-blur-2xl p-2 border border-white/10 rounded-xl shadow-2xl pointer-events-auto ${isFullScreen ? 'lg:!inset-auto lg:!bottom-6 lg:!left-6 lg:!w-[300px]' : ''}`}>
                 <button
                   onClick={clearMessages}
                   disabled={messages.length === 0}
