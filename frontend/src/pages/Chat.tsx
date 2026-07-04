@@ -202,8 +202,26 @@ const Chat = () => {
 
         {/* Left Column: The Stage */}
         <section className="absolute lg:relative inset-0 lg:inset-auto flex-grow flex flex-col gap-0 lg:gap-6 min-w-0 z-0 lg:z-auto items-center justify-center">
-          <div ref={remoteContainerRef} className={`w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] ${isFullScreen ? '!h-screen !w-screen !max-h-screen !max-w-screen lg:aspect-auto' : aspectRatios[activeRatioIndex].class} lg:card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden shrink-0`}>
-            {/* Aspect Ratio Selector (Desktop Only) */}
+          <div 
+            ref={remoteContainerRef} 
+            className={`w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] ${isFullScreen ? 'flex items-center justify-center bg-black w-screen h-screen' : aspectRatios[activeRatioIndex].class + ' lg:card-brutal shrink-0'} !p-0 relative group overflow-hidden ${!isFullScreen ? 'bg-black' : ''}`}
+          >
+            <div 
+              className={`relative flex-none bg-black overflow-hidden ${isFullScreen ? aspectRatios[activeRatioIndex].class : 'w-full h-full'}`}
+              style={isFullScreen ? {
+                width: '100%',
+                height: '100%',
+                maxWidth: aspectRatios[activeRatioIndex].label === '16:9' ? 'calc(100vh * 16 / 9)' : 
+                          aspectRatios[activeRatioIndex].label === '1:1' ? '100vh' : 
+                          aspectRatios[activeRatioIndex].label === '9:16' ? 'calc(100vh * 9 / 16)' : 
+                          'calc(100vh * 3 / 2)',
+                maxHeight: aspectRatios[activeRatioIndex].label === '16:9' ? 'calc(100vw * 9 / 16)' : 
+                           aspectRatios[activeRatioIndex].label === '1:1' ? '100vw' : 
+                           aspectRatios[activeRatioIndex].label === '9:16' ? 'calc(100vw * 16 / 9)' : 
+                           'calc(100vw * 2 / 3)'
+              } : {}}
+            >
+              {/* Aspect Ratio Selector (Desktop Only) */}
             <div className="absolute top-4 left-4 z-20 hidden lg:flex items-center gap-1 bg-black/60 backdrop-blur-md p-1 border border-white/10 rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {aspectRatios.map((ratio, idx) => (
                 <button
@@ -275,6 +293,7 @@ const Chat = () => {
                 )}
               </>
             )}
+            </div>
           </div>
 
           {/* Controls Dashboard */}
