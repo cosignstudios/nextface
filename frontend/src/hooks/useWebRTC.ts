@@ -71,6 +71,23 @@ export const useWebRTC = () => {
     }
   }, [isMicOn, localStream]);
 
+  const cancelMatching = useCallback(() => {
+    try {
+      fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, action: "cancel" }),
+        keepalive: true
+      }).catch(() => {});
+    } catch (e) {}
+  }, [userId]);
+
+  useEffect(() => {
+    return () => {
+      cancelMatching();
+    };
+  }, [cancelMatching]);
+
   useEffect(() => {
     if (localStream) {
       localStream.getVideoTracks().forEach(t => (t.enabled = isCameraOn));
@@ -285,9 +302,21 @@ export const useWebRTC = () => {
         if (status === 'SUBSCRIBED') {
           console.log(`Subscribed to Supabase Room ${roomId}`);
           createPeerConnection(roomId, isInitiator, stream, channel);
+
+          // Anti-Ghosting Protocol: If we don't get a signal in 8 seconds, the other peer dropped. Move on!
+          setTimeout(() => {
+             if (peerConnectionRef.current && !peerConnectionRef.current.remoteDescription) {
+                 console.log("Peer ghosted (no signal received). Auto-skipping to next match...");
+                 cleanupConnection();
+                 setStatus("waiting");
+                 setMessages([]);
+                 isMatchingRef.current = true;
+                 pollForMatch();
+             }
+          }, 8000);
         }
       });
-  }, [userId, initializeMedia, createPeerConnection]);
+  }, [userId, initializeMedia, createPeerConnection, cleanupConnection, pollForMatch]);
 
   const pollForMatch = useCallback(async () => {
     if (!isMatchingRef.current) return;
@@ -326,6 +355,8 @@ export const useWebRTC = () => {
   };
 
   const next = () => {
+    cancelMatching(); // Remove ourselves from the queue if we were waiting
+
     // Notify peer before closing
     if (dataChannelRef.current && dataChannelRef.current.readyState === 'open') {
       dataChannelRef.current.send(JSON.stringify({ type: 'disconnect' }));
@@ -338,6 +369,7 @@ export const useWebRTC = () => {
   };
 
   const stop = () => {
+    cancelMatching();
     if (dataChannelRef.current && dataChannelRef.current.readyState === 'open') {
       dataChannelRef.current.send(JSON.stringify({ type: 'disconnect' }));
     }

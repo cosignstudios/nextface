@@ -20,11 +20,20 @@ export default {
     }
 
     try {
-      const body = await request.json() as { userId: string };
-      const { userId } = body;
+      const body = await request.json() as { userId: string, action?: string };
+      const { userId, action } = body;
       
       if (!userId) {
         return new Response("Missing userId", { status: 400, headers: CORS_HEADERS });
+      }
+
+      // Handle cancel request to prevent ghosts
+      if (action === "cancel") {
+        let row: any = await env.DB.prepare("SELECT * FROM global_queue WHERE id = 1").first();
+        if (row && row.waiting_user_id === userId) {
+          await env.DB.prepare("UPDATE global_queue SET waiting_user_id = NULL, version = version + 1 WHERE id = 1 AND version = ?").bind(row.version).run();
+        }
+        return new Response(JSON.stringify({ status: "cancelled" }), { headers: CORS_HEADERS });
       }
 
       // Step 1: Read the current state of the global queue
