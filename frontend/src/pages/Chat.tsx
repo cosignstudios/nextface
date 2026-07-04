@@ -22,7 +22,9 @@ import {
   Moon,
   Palette,
   ArrowLeft,
-  Eraser
+  Eraser,
+  Maximize,
+  Minimize
 } from "lucide-react";
 
 const aspectRatios = [
@@ -78,6 +80,26 @@ const Chat = () => {
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteContainerRef = useRef<HTMLDivElement>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullScreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullScreenChange);
+  }, []);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      remoteContainerRef.current?.requestFullscreen().catch(err => {
+        console.error("Error attempting to enable fullscreen:", err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -181,7 +203,7 @@ const Chat = () => {
 
         {/* Left Column: The Stage */}
         <section className="absolute lg:relative inset-0 lg:inset-auto flex-grow flex flex-col gap-0 lg:gap-6 min-w-0 z-0 lg:z-auto items-center justify-center">
-          <div className={`w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] ${aspectRatios[activeRatioIndex].class} lg:card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden shrink-0`}>
+          <div ref={remoteContainerRef} className={`w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] ${isFullScreen ? '!h-screen !w-screen !max-h-screen !max-w-screen lg:aspect-auto' : aspectRatios[activeRatioIndex].class} lg:card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden shrink-0`}>
             {/* Aspect Ratio Selector (Desktop Only) */}
             <div className="absolute top-4 left-4 z-20 hidden lg:flex items-center gap-1 bg-black/60 backdrop-blur-md p-1 border border-white/10 rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {aspectRatios.map((ratio, idx) => (
@@ -197,6 +219,17 @@ const Chat = () => {
                   {ratio.label}
                 </button>
               ))}
+            </div>
+            
+            {/* Fullscreen Toggle */}
+            <div className="absolute top-4 right-4 z-20 hidden lg:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button
+                onClick={toggleFullScreen}
+                className="p-1.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg shadow-2xl text-white/70 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                title="Toggle Fullscreen"
+              >
+                {isFullScreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+              </button>
             </div>
 
             {!remoteStream && (
