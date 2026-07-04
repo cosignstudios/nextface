@@ -191,7 +191,7 @@ const Chat = () => {
 
 
       {/* Main Content Area */}
-      <main ref={mainRef} className={`relative flex flex-col lg:flex-row flex-1 min-h-0 w-full overflow-hidden p-0 lg:p-6 gap-0 lg:gap-6 bg-black lg:bg-transparent ${isFullScreen ? 'lg:!bg-black lg:!p-0 lg:!gap-0' : ''}`}>
+      <main ref={mainRef} className={`relative flex flex-col lg:flex-row flex-1 min-h-0 w-full overflow-hidden p-0 lg:p-6 gap-0 lg:gap-6 bg-black lg:bg-transparent ${isFullScreen ? 'lg:!bg-[var(--surface-white)] lg:!p-0 lg:!gap-0' : ''}`}>
 
         {/* Mobile Back Button (Floating) */}
         <Link 
@@ -205,7 +205,7 @@ const Chat = () => {
         <section className="absolute lg:relative inset-0 lg:inset-auto flex-grow flex flex-col gap-0 lg:gap-6 min-w-0 z-0 lg:z-auto items-center justify-center">
           <div 
             ref={remoteContainerRef} 
-            className={`w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] ${isFullScreen ? 'flex items-center justify-center bg-black w-screen h-screen' : aspectRatios[activeRatioIndex].class + ' lg:card-brutal shrink-0'} !p-0 relative group overflow-hidden ${!isFullScreen ? 'bg-black' : ''}`}
+            className={`w-full flex-grow lg:flex-none lg:w-auto lg:h-[calc(100vh-240px)] ${isFullScreen ? 'flex items-center justify-center bg-[var(--surface-white)] w-screen h-screen' : aspectRatios[activeRatioIndex].class + ' lg:card-brutal shrink-0'} !p-0 relative group overflow-hidden ${!isFullScreen ? 'bg-black' : ''}`}
           >
             <div 
               className={`relative flex-none bg-black overflow-hidden ${isFullScreen ? aspectRatios[activeRatioIndex].class : 'w-full h-full'}`}
