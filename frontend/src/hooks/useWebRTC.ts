@@ -255,7 +255,7 @@ export const useWebRTC = () => {
     const channel = supabase.channel(`room:${roomId}`);
     channelRef.current = channel;
     
-    let pingInterval: NodeJS.Timeout;
+    let pingInterval: ReturnType<typeof setInterval>;
 
     channel
       .on('broadcast', { event: 'ping' }, async () => {
