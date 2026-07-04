@@ -245,18 +245,7 @@ export const useWebRTC = () => {
       }
     };
 
-    if (isInitiator) {
-      pc.createOffer()
-        .then((offer) => pc.setLocalDescription(offer))
-        .then(() => {
-          channel.send({
-            type: 'broadcast',
-            event: 'offer',
-            payload: { offer: pc.localDescription!, senderId: userId }
-          });
-        })
-        .catch((e) => console.error("Error creating offer", e));
-    }
+    // Offer is now created ONLY after receiving 'pong' from the answerer to prevent race conditions.
   }, [userId, setupDataChannel, handlePeerDisconnect]);
 
   async function connectToSupabaseRoom(roomId: string, isInitiator: boolean) {
@@ -265,8 +254,31 @@ export const useWebRTC = () => {
 
     const channel = supabase.channel(`room:${roomId}`);
     channelRef.current = channel;
+    
+    let pingInterval: NodeJS.Timeout;
 
     channel
+      .on('broadcast', { event: 'ping' }, async () => {
+         if (!isInitiator) {
+            channel.send({ type: 'broadcast', event: 'pong', payload: { senderId: userId } });
+         }
+      })
+      .on('broadcast', { event: 'pong' }, async () => {
+         if (isInitiator && peerConnectionRef.current && peerConnectionRef.current.signalingState === 'stable' && !peerConnectionRef.current.remoteDescription) {
+            clearInterval(pingInterval);
+            try {
+              const offer = await peerConnectionRef.current.createOffer();
+              await peerConnectionRef.current.setLocalDescription(offer);
+              channel.send({
+                type: 'broadcast',
+                event: 'offer',
+                payload: { offer: peerConnectionRef.current.localDescription!, senderId: userId }
+              });
+            } catch (err) {
+              console.error("Error creating offer", err);
+            }
+         }
+      })
       .on('broadcast', { event: 'offer' }, async ({ payload }) => {
         if (payload.senderId === userId || !peerConnectionRef.current) return;
         try {
@@ -303,8 +315,19 @@ export const useWebRTC = () => {
           console.log(`Subscribed to Supabase Room ${roomId}`);
           createPeerConnection(roomId, isInitiator, stream, channel);
 
+          if (isInitiator) {
+             pingInterval = setInterval(() => {
+                if (peerConnectionRef.current && !peerConnectionRef.current.remoteDescription) {
+                   channel.send({ type: 'broadcast', event: 'ping', payload: {} });
+                } else {
+                   clearInterval(pingInterval);
+                }
+             }, 1000);
+          }
+
           // Anti-Ghosting Protocol: If we don't get a signal in 8 seconds, the other peer dropped. Move on!
           setTimeout(() => {
+             clearInterval(pingInterval);
              if (peerConnectionRef.current && !peerConnectionRef.current.remoteDescription) {
                  console.log("Peer ghosted (no signal received). Auto-skipping to next match...");
                  cleanupConnection();
