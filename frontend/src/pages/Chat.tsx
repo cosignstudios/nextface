@@ -284,7 +284,7 @@ const Chat = () => {
           <div className="h-full lg:card-brutal !p-0 bg-transparent lg:bg-black relative flex flex-col group overflow-hidden">
             
             {/* Local Feed */}
-            <div className="absolute top-4 right-4 lg:inset-0 w-24 h-36 md:w-32 md:h-48 lg:w-full lg:h-full rounded-xl lg:rounded-none overflow-hidden shadow-2xl lg:shadow-none pointer-events-auto border border-white/30 lg:border-none z-50 bg-black">
+            <div className="absolute top-4 right-4 lg:inset-0 w-24 h-36 md:w-32 md:h-48 lg:w-full lg:h-full rounded-xl lg:rounded-none overflow-hidden shadow-2xl lg:shadow-none pointer-events-auto border border-white/30 lg:border-none z-50 lg:z-0 bg-black">
               <video
                 ref={localVideoRef}
                 className={`absolute inset-0 w-full h-full object-cover ${!isScreenSharing ? "-scale-x-100" : ""} ${localStream && (isCameraOn || isScreenSharing) ? "opacity-100" : "opacity-0"} transition-opacity duration-1000`}
