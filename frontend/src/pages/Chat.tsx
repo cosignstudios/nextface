@@ -20,7 +20,8 @@ import {
   MonitorOff,
   Sun,
   Moon,
-  Palette
+  Palette,
+  ArrowLeft
 } from "lucide-react";
 
 const Chat = () => {
@@ -107,7 +108,7 @@ const Chat = () => {
   return (
     <div className="flex flex-col h-screen bg-brutal-bg text-[var(--text-color)] font-body overflow-hidden">
       {/* Top Navbar */}
-      <header className="h-16 bg-[var(--surface-white)] border-b-2 border-black px-4 md:px-8 flex justify-between items-center shrink-0 z-50">
+      <header className="hidden lg:flex h-16 bg-[var(--surface-white)] border-b-2 border-black px-4 md:px-8 justify-between items-center shrink-0 z-50">
         <Link to="/" className="flex items-center gap-3 transition-transform hover:rotate-1 hover:scale-105">
           <img src="/NextFace.svg" alt="NextFace Logo" className="w-8 h-8 md:w-11 md:h-11 object-contain" />
           <h1 className="text-xl md:text-2xl font-fancy tracking-wider text-[var(--text-color)]">
@@ -157,6 +158,14 @@ const Chat = () => {
 
       {/* Main Content Area */}
       <main className="relative flex flex-col lg:flex-row flex-1 min-h-0 w-full overflow-hidden p-0 lg:p-6 gap-0 lg:gap-6 bg-black lg:bg-transparent">
+
+        {/* Mobile Back Button (Floating) */}
+        <Link 
+          to="/" 
+          className="absolute top-4 left-4 z-50 flex items-center justify-center w-10 h-10 bg-black/40 backdrop-blur-md rounded-full text-white lg:hidden border border-white/20 active:scale-95 transition-transform"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </Link>
 
         {/* Left Column: The Stage */}
         <section className="absolute lg:relative inset-0 lg:inset-auto flex-grow flex flex-col gap-0 lg:gap-6 min-w-0 z-0 lg:z-auto">
