@@ -172,8 +172,8 @@ const Chat = () => {
         </Link>
 
         {/* Left Column: The Stage */}
-        <section className="absolute lg:relative inset-0 lg:inset-auto flex-grow flex flex-col gap-0 lg:gap-6 min-w-0 z-0 lg:z-auto">
-          <div className="flex-grow lg:card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden">
+        <section className="absolute lg:relative inset-0 lg:inset-auto flex-grow flex flex-col gap-0 lg:gap-6 min-w-0 z-0 lg:z-auto items-center justify-center">
+          <div className="w-full flex-grow lg:flex-none lg:h-full lg:aspect-square lg:card-brutal !p-0 bg-black relative group flex items-center justify-center overflow-hidden">
             {!remoteStream && (
                 <div className="flex flex-col items-center gap-6 text-center px-10 z-10 relative">
                   <div className="w-16 h-16 md:w-24 md:h-24 border-4 border-black bg-brutal-yellow flex items-center justify-center shadow-brutal animate-bounce mb-2 md:mb-4 rotate-3">
