@@ -283,7 +283,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onOpenDe
               >
                 <div className="flex items-center gap-3">
                   <LogOut className="w-5 h-5" />
-                  <span className="text-xs font-black uppercase tracking-widest text-black">Terminate Session</span>
+                  <span className="text-xs font-black uppercase tracking-widest text-black">Logout</span>
                 </div>
                 <div className="w-2 h-2 bg-black group-hover:animate-ping"></div>
               </button>
@@ -297,7 +297,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onOpenDe
               >
                 <div className="flex items-center gap-3">
                   <Trash2 className="w-5 h-5 text-black" />
-                  <span className="text-xs font-black uppercase tracking-widest text-black">Wipe Identity</span>
+                  <span className="text-xs font-black uppercase tracking-widest text-black">Delete Account</span>
                 </div>
                 <div className="w-2 h-2 bg-black group-hover:scale-150 transition-transform"></div>
               </button>

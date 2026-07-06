@@ -36,30 +36,15 @@ const Footer = () => {
             <h4 className="text-lg font-black mb-6 border-b-2 border-black inline-block">Legal</h4>
             <ul className="space-y-4">
               <li><Link to="/privacy" className="font-bold hover:bg-brutal-pink px-1 transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/cookies" className="font-bold hover:bg-brutal-yellow px-1 transition-colors">Cookies Policy</Link></li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-lg font-black mb-6 border-b-2 border-black inline-block">Stay Human</h4>
-            <p className="text-sm font-medium mb-6">Join our community of verified chatters.</p>
-            <div className="flex gap-4">
-              <a href="#" className="w-12 h-12 card-brutal !p-0 flex items-center justify-center hover:bg-brutal-blue">
-                <span className="font-black">X</span>
-              </a>
-              <a href="#" className="w-12 h-12 card-brutal !p-0 flex items-center justify-center hover:bg-brutal-pink">
-                <span className="font-black">IG</span>
-              </a>
-            </div>
-          </div>
+
         </div>
         
         <div className="pt-12 border-t-2 border-black flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-sm font-black uppercase tracking-widest">© 2024 NextFace Protocol. All Rights Reserved.</p>
-          <div className="flex gap-8">
-             <span className="text-xs font-black uppercase tracking-tighter bg-black text-white px-2 py-1">EN-US</span>
-             <span className="text-xs font-black uppercase tracking-tighter bg-brutal-green px-2 py-1">System Global</span>
-          </div>
+          <p className="text-sm font-black uppercase tracking-widest">© 2026 all rights to <a href="https://cosignstudio.com" target="_blank" rel="noopener noreferrer" className="hover:underline">cosign studio</a></p>
+
         </div>
       </div>
     </footer>

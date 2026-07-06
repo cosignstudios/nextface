@@ -10,7 +10,6 @@ import Login from "./pages/Login";
 import AboutUs from "./pages/AboutUs";
 import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import CookiesPolicy from "./pages/CookiesPolicy";
 import ContactUs from "./pages/ContactUs";
 
 function AppContent() {
@@ -29,7 +28,6 @@ function AppContent() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/cookies" element={<CookiesPolicy />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Login />} />

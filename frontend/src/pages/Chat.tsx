@@ -59,7 +59,7 @@ const Chat = () => {
     toggleCamera,
     isScreenSharing,
     toggleScreenShare,
-    onlineUsers,
+
     clearMessages,
     remoteMicOn,
     remoteCameraOn,
@@ -261,18 +261,9 @@ const Chat = () => {
                     {status === "idle" ? "Ready to begin?" : status === "waiting" ? "Searching for Peer..." : "Syncing Phase..."}
                   </h2>
                   <p className="font-bold uppercase text-xs tracking-tight text-white/70">
-                    {status === "idle" ? "Engage protocol to find a direct handshake." : status === "waiting" ? "Pinging Nexus. Awaiting an available node..." : "Establishing peer-to-peer tunnel..."}
+                    {status === "idle" ? "" : status === "waiting" ? "" : "Establishing peer-to-peer tunnel..."}
                   </p>
-                  {status === "waiting" && (
-                    <div className="flex flex-col gap-4">
-                      <div className="mt-4 p-4 border-2 border-black bg-brutal-blue/20 text-[10px] font-black uppercase tracking-widest text-white transform -rotate-1">
-                        Pro Tip: Open an incognito window to test with yourself!
-                      </div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/50 animate-pulse">
-                        Searching for handshakes: <span className="text-brutal-green font-black">{onlineUsers}</span> ACTIVE NODE(S)
-                      </div>
-                    </div>
-                  )}
+
                 </div>
             )}
             
@@ -397,9 +388,6 @@ const Chat = () => {
               <div className="flex-grow overflow-y-auto p-2 flex flex-col gap-2 no-scrollbar pointer-events-auto">
                 {messages.length === 0 ? (
                   <div className="my-auto text-center px-4 py-8">
-                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/20 leading-tight">
-                       Awaiting Handshake...
-                     </p>
                   </div>
                 ) : (
                   messages.map((msg, idx) => (
